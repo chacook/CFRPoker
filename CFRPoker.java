@@ -3,7 +3,7 @@ import java.util.TreeMap;
 public class CFRPoker{
 	public static void main(String[] args){
 		int num_cards = 13;
-		int iter = 10_000_000;
+		int iter = 1_000_000;
 		PokerTrainer pt = new PokerTrainer(num_cards);
 		pt.train(iter);
 	}
@@ -127,18 +127,23 @@ class PokerTrainer{
 		double[] strategy = player == 0 ? node.get_strategy(p0) : node.get_strategy(p1); //current strategy being played by the node
 		double opp_prob = opponent == 0 ? p0 : p1; //probability of reaching this node based on opponents previous strategies
 		String new_action; //current action being considered
+		double threshold = 0.01; //threshold for calculating the utility of an action
 
 		//calculate utility for node
 		for (int action = 0; action < node.ACTIONS; action++){
 			//choose a new action
 			new_action = action_set[action];
 			
-			//move down the subtree to determine the utility of our action
-			//note: multiply by -1 because each child node is from the opponent's perspective, so it will return the opponent's utility
-			if (player == 0){
+			//easy optimization:
+			//if probability of taking an action is below threshold, keep utility for that action at 0
+			if (strategy[action] < threshold){
+				continue;
+			} 
+			//traverse down the subtree to determine the utility of our action
+			//note: multiply by -1 because next node visited is from the opponent's perspective, so it will return the opponent's utility
+			else if (player == 0){
 				utility[action] = -1 * cfr(cards, history + new_action, p0 * strategy[action], p1);
-			}
-			else{		
+			} else{		
 				utility[action] = -1 * cfr(cards, history + new_action, p0, p1 * strategy[action]);
 			}
 
@@ -200,7 +205,7 @@ class Node{
 		return strategy;
 	}
 	
-	//returns: the average strategy of all strategies played (approaches Nash equilibrium as training iterations increase)
+	//returns: the average strategy of all strategies played (approaches Nash equilibrium as number of training iterations increase)
 	public double[] get_avg_strategy(){
 		double normalizing_sum = 0;
 		double[] avg_strategy = new double[ACTIONS];
