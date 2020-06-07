@@ -3,7 +3,7 @@ import java.util.TreeMap;
 public class CFRPoker{
 	public static void main(String[] args){
 		int num_cards = 13;
-		int iter = 1_000_000;
+		int iter = 100_000_000;
 		PokerTrainer pt = new PokerTrainer(num_cards);
 		pt.train(iter);
 	}
@@ -143,7 +143,7 @@ class PokerTrainer{
 			//note: multiply by -1 because next node visited is from the opponent's perspective, so it will return the opponent's utility
 			else if (player == 0){
 				utility[action] = -1 * cfr(cards, history + new_action, p0 * strategy[action], p1);
-			} else{		
+			} else {		
 				utility[action] = -1 * cfr(cards, history + new_action, p0, p1 * strategy[action]);
 			}
 
