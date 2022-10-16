@@ -3,7 +3,7 @@ import java.util.TreeMap;
 public class CFRPoker{
 	public static void main(String[] args){
 		int num_cards = 13;
-		int iter = 100_000_000;
+		int iter = 125_000_000;
 		PokerTrainer pt = new PokerTrainer(num_cards);
 		pt.train(iter);
 	}
